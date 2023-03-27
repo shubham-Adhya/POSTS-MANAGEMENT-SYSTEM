@@ -22,7 +22,24 @@ userRouter.post("/register", async (req, res) => {
 
 //login
 userRouter.post("/login", async (req, res) => {
-
+    const {email, password}=req.body;
+    try {
+        const user=await UserModel.findOne({email})
+        if(user){
+            bcrypt.compare(password, user.password, async(err, result)=>{
+                // result == true
+                if(result){
+                    res.status(200).json({ "msg": "Login Success !",token:jwt.sign({"UserID":user._id},'masai')})
+                }else{
+                    res.status(400).json({ "msg": "Wrong Password !" })
+                }
+            });
+        }else{
+            res.status(400).json({ "msg": "User not found" })
+        }
+    } catch (error) {
+        res.status(400).json({ "msg": error.message })
+    }
 })
 
 module.exports = {
