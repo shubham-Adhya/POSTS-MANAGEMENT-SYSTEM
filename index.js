@@ -11,14 +11,15 @@ const app=express()
 app.use(express.json())
 // app.use(cors());
 
+app.get("/",(req,res)=>{
+    res.status(200).send("Welcome to Posts Management System")
+})
 app.use("/users",userRouter)
 
 app.use(auth)
 app.use("/posts",postRouter)
 
-app.get("/",(req,res)=>{
-    res.status(200).send("Welcome to Posts Management System")
-})
+
 
 
 app.listen(process.env.port,async()=>{
