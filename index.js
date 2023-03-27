@@ -4,13 +4,17 @@ require("dotenv").config()
 const cors=require("cors");
 const { connection } = require("./connection/db");
 const { userRouter } = require("./routes/users.routes")
-const app=express();
-// app.use(cors());
+const { postRouter } = require("./routes/posts.routes")
+const { auth } = require("./middlewares/auth.middleware")
+
+const app=express()
 app.use(express.json())
+// app.use(cors());
 
 app.use("/users",userRouter)
 
-
+app.use(auth)
+app.use("/posts",postRouter)
 
 app.get("/",(req,res)=>{
     res.status(200).send("Welcome to Posts Management System")
