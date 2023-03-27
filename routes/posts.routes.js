@@ -17,7 +17,21 @@ postRouter.post("/add",async (req,res)=>{
 })
 
 //get all posts
-postRouter.get("/")
+postRouter.get("/",async(req,res)=>{
+    const token=req.headers.authorization.split(" ")[1]
+    const decoded= jwt.verify(token,'masai')
+    try {
+        if(decoded){
+            const posts = await PostModel.find({userID:decoded.userID})
+            res.status(200).json(posts)
+        }else{
+            res.status(400).json({"msg":"No post has been created by the user"})
+        }
+        
+    } catch (error) {
+        res.status(400).json({"msg":error.message})
+    }
+})
 
 module.exports={
     postRouter 
