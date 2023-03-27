@@ -16,6 +16,25 @@ postRouter.post("/add",async (req,res)=>{
     }
 })
 
+//get posts pagination
+postRouter.get("/:page",async(req,res)=>{
+    let {page}=req.params
+    page=+page-1
+    const token=req.headers.authorization.split(" ")[1]
+    const decoded= jwt.verify(token,'masai')
+    try {
+        if(decoded){
+            const posts = await PostModel.find({userID:decoded.userID}).skip(3*page).limit(3)
+            res.status(200).json(posts)
+        }else{
+            res.status(400).json({"msg":"No post has been created by the user"})
+        }
+        
+    } catch (error) {
+        res.status(400).json({"msg":error.message})
+    }
+})
+
 //get all posts
 postRouter.get("/",async(req,res)=>{
     const token=req.headers.authorization.split(" ")[1]
@@ -23,6 +42,24 @@ postRouter.get("/",async(req,res)=>{
     try {
         if(decoded){
             const posts = await PostModel.find({userID:decoded.userID})
+            res.status(200).json(posts)
+        }else{
+            res.status(400).json({"msg":"No post has been created by the user"})
+        }
+        
+    } catch (error) {
+        res.status(400).json({"msg":error.message})
+    }
+})
+//get posts at top
+postRouter.get("/top/:page",async(req,res)=>{
+    let {page}=req.params
+    page=+page-1
+    const token=req.headers.authorization.split(" ")[1]
+    const decoded= jwt.verify(token,'masai')
+    try {
+        if(decoded){
+            const posts = await PostModel.find({userID:decoded.userID}).sort({no_of_comments: -1 }).skip(3*page).limit(3)
             res.status(200).json(posts)
         }else{
             res.status(400).json({"msg":"No post has been created by the user"})
